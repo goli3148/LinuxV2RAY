@@ -2,43 +2,57 @@ import tkinter as tk
 from tkinter import ttk
 import subprocess
 
+import threading
+
 from editConfigJson import editConfigFile
 from path import paths
 import os
 
-RUNNING = False
 
-def save_info():
-    protocol = protocol_entry.get()
-    address = address_entry.get()
-    port = port_entry.get()
-    uid = uid_entry.get()
-    host = host_entry.get()
-    header_type = header_type_entry.get()
-    network_type = network_type_entry.get()
-    editConfigFile(protocol=protocol, address=address, port=port, uid=uid, host=host, headerType=header_type, networkType=network_type)
-    run_process()
-
-def run_process():
-    global RUNNING
-    if RUNNING:
-        stop_process()
-
+def runV2RAY():
     v2ray = paths()['v2ray']
     config = paths()['config']
 
     # output = subprocess.check_output(f'{v2ray} -config={config}', shell=True)
 
-    os.system(f'{v2ray} -config={config}')
+    os.system(f'{v2ray} -config={config} &')
     # output_text.config(state=tk.NORMAL)
     # output_text.insert(tk.END, output.decode())
     # output_text.config(state=tk.DISABLED)
 
+RUNNING = False
+RunningThread = threading.Thread(target=runV2RAY)
+
+
+def save_info():
+    if RUNNING:
+        stop_process()
+    protocol = protocol_entry.get()
+    address = address_entry.get()
+    port = int(port_entry.get())
+    uid = uid_entry.get()
+    host = host_entry.get()
+    header_type = header_type_entry.get()
+    network_type = network_type_entry.get()
+    editConfigFile(protocol=protocol, address=address, port=port, uid=uid, host=host, headerType=header_type, networkType=network_type)
+
+def run_process():
+    global RUNNING
+    global RunningThread
+    if RUNNING:
+        stop_process()
+    RunningThread = threading.Thread(target=runV2RAY)
+    RunningThread.start()
     RUNNING = True
 
 def stop_process():
     # Add code to stop your process here
     global RUNNING
+    global RunningThread
+    PID = os.popen('pgrep v2ray').read().strip()
+    os.system(f'kill {PID}')
+    RunningThread.join()
+    print('thread stpped')
     RUNNING = False
 
 def get_default_values():
@@ -53,7 +67,7 @@ def get_default_values():
     }
 
 root = tk.Tk()
-root.title("GUI")
+root.title("V2Linux")
 
 style = ttk.Style()
 style.configure("TButton", padding=6, relief="flat", background="#007bff", foreground="white")
