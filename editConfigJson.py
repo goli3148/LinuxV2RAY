@@ -21,4 +21,3 @@ def editConfigFile(protocol='vless', address='fr.v2landsshop.top',
     with open(config_path, 'w') as file:
         json.dump(config, file, indent=2)
 
-editConfigFile()
