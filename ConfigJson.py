@@ -21,3 +21,18 @@ def editConfigFile(protocol='vless', address='fr.v2landsshop.top',
     with open(config_path, 'w') as file:
         json.dump(config, file, indent=2)
 
+def ExportConfigFile():
+    config_path = paths()['config']
+    with open(config_path, 'r') as file:
+        config = json.load(file)
+    
+    return {
+        "protocol": config['outbounds'][0]['protocol'],
+        "address": config['outbounds'][0]['settings']['vnext'][0]['address'],
+        "port": config['outbounds'][0]['settings']['vnext'][0]['port'],
+        "uid": config['outbounds'][0]['settings']['vnext'][0]['users'][0]['id'],
+        "host": config['outbounds'][0]['streamSettings']['tcpSettings']['header']['request']['headers']['Host'],
+        "header_type": config['outbounds'][0]['streamSettings']['tcpSettings']['header']['type'],
+        "network_type": config['outbounds'][0]['streamSettings']['network']
+    }
+

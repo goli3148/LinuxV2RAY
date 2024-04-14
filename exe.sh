@@ -1,0 +1,1 @@
+v2ray-core/v2ray -config=v2ray-core/config.json

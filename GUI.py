@@ -4,7 +4,7 @@ import subprocess
 
 import threading
 
-from editConfigJson import editConfigFile
+from ConfigJson import editConfigFile, ExportConfigFile
 from path import paths
 import os
 
@@ -13,12 +13,7 @@ def runV2RAY():
     v2ray = paths()['v2ray']
     config = paths()['config']
 
-    # output = subprocess.check_output(f'{v2ray} -config={config}', shell=True)
-
     os.system(f'{v2ray} -config={config} &')
-    # output_text.config(state=tk.NORMAL)
-    # output_text.insert(tk.END, output.decode())
-    # output_text.config(state=tk.DISABLED)
 
 RUNNING = False
 RunningThread = threading.Thread(target=runV2RAY)
@@ -35,6 +30,7 @@ def save_info():
     header_type = header_type_entry.get()
     network_type = network_type_entry.get()
     editConfigFile(protocol=protocol, address=address, port=port, uid=uid, host=host, headerType=header_type, networkType=network_type)
+    
 
 def run_process():
     global RUNNING
@@ -56,15 +52,7 @@ def stop_process():
     RUNNING = False
 
 def get_default_values():
-    return {
-        "protocol": "vless",
-        "address": "fr.v2landsshop.top",
-        "port": 36887,
-        "uid": "95975b55-40e9-4338-90ba-7c244e63bd7d",
-        "host": "speedtest.net",
-        "header_type": "http",
-        "network_type": "tcp"
-    }
+    return ExportConfigFile()
 
 root = tk.Tk()
 root.title("V2Linux")
